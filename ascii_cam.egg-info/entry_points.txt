@@ -1,3 +1,0 @@
-[console_scripts]
-ascii-cam = ascii_cam.main:run
-ascii-cam-prototype = ascii_cam.prototype:main
