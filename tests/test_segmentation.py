@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from ascii_cam.segmentation import ForegroundSegmenter, SegmentationConfig, SegmentationError
+from matrix_cam.segmentation import ForegroundSegmenter, SegmentationConfig, SegmentationError
 
 
 def test_foreground_segmenter_rejects_invalid_backend() -> None:

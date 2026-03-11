@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ascii-cam"
+name = "matrix-cam"
 version = "0.1.0"
 description = "Curses-based ASCII camera viewer for macOS terminals"
 readme = "README.md"
@@ -18,5 +18,5 @@ dev = ["pytest>=8.0"]
 ml = ["mediapipe>=0.10"]
 
 [project.scripts]
-ascii-cam = "ascii_cam.main:run"
-ascii-cam-prototype = "ascii_cam.prototype:main"
+matrix-cam = "matrix_cam.main:run"
+matrix-cam-prototype = "matrix_cam.prototype:main"

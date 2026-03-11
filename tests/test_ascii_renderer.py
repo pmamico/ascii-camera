@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from ascii_cam.ascii_renderer import ASCII_CHARS, AsciiFrame, ascii_preview, frame_to_ascii
+from matrix_cam.ascii_renderer import ASCII_CHARS, AsciiFrame, ascii_preview, frame_to_ascii
 
 
 def test_frame_to_ascii_maps_dark_and_light_pixels_bgr() -> None:
@@ -44,6 +44,15 @@ def test_frame_to_ascii_applies_foreground_mask() -> None:
     assert result.rows[1][0] == " "
     assert result.mask is not None
     assert result.mask.sum() == 2
+
+
+def test_frame_to_ascii_applies_brightness_scaling() -> None:
+    frame = np.full((1, 1, 3), 255, dtype=np.uint8)
+
+    dim = frame_to_ascii(frame, max_width=1, max_height=1, brightness=0.25)
+    full = frame_to_ascii(frame, max_width=1, max_height=1, brightness=1.0)
+
+    assert ASCII_CHARS.index(dim.rows[0][0]) < ASCII_CHARS.index(full.rows[0][0])
 
 
 def test_ascii_preview_accepts_ascii_frame() -> None:

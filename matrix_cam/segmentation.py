@@ -66,7 +66,7 @@ class _SelfieBackend:
             from mediapipe.python.solutions import selfie_segmentation
         except ImportError as exc:  # pragma: no cover - optional dependency
             raise SegmentationError(
-                "Selfie backend requires mediapipe. Install ascii-cam[ml] to enable it."
+                "Selfie backend requires mediapipe. Install matrix-cam[ml] to enable it."
             ) from exc
 
         self._segmenter = selfie_segmentation.SelfieSegmentation(model_selection=1)

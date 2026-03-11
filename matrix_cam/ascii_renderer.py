@@ -27,6 +27,7 @@ def frame_to_ascii(
     max_height: int,
     charset: Sequence[str] = ASCII_CHARS,
     foreground_mask: Optional[np.ndarray] = None,
+    brightness: float = 1.0,
 ) -> AsciiFrame:
     if bgr_frame.ndim != 3 or bgr_frame.shape[2] != 3:
         raise ValueError("Input frame must be a BGR image")
@@ -34,6 +35,8 @@ def frame_to_ascii(
         raise ValueError("max_width and max_height must be positive")
     if foreground_mask is not None and foreground_mask.shape[:2] != bgr_frame.shape[:2]:
         raise ValueError("foreground_mask must match the input frame size")
+    if brightness <= 0:
+        raise ValueError("brightness must be positive")
 
     frame_height, frame_width = bgr_frame.shape[:2]
     target_width = max(1, min(max_width, frame_width))
@@ -50,7 +53,8 @@ def frame_to_ascii(
     )
 
     normalized = gray_resized.astype(np.float32) / 255.0
-    scaled = np.clip((normalized * (len(charset) - 1)).astype(np.int32), 0, len(charset) - 1)
+    scaled_brightness = np.clip(normalized * brightness, 0.0, 1.0)
+    scaled = np.clip((scaled_brightness * (len(charset) - 1)).astype(np.int32), 0, len(charset) - 1)
     charset_array = np.array(charset, dtype="<U1")
     ascii_rows = ["".join(charset_array[row].tolist()) for row in scaled]
 
