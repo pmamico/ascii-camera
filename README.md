@@ -2,8 +2,7 @@
 
 > Warning: may contains glitches 👾
 
-ASCII camera viewer for macOS terminals. 
-The application captures BGR frames from the webcam, maps each pixel to ASCII characters, and renders the result using bright green Matrix-style glyphs.
+ASCII camera viewer for macOS terminals. The application captures BGR frames from the webcam, maps each pixel to ASCII characters, and renders the result using bright green Matrix-style glyphs inside a curses UI.
 
 ## Requirements
 
@@ -13,34 +12,51 @@ The application captures BGR frames from the webcam, maps each pixel to ASCII ch
 
 ## Installation
 
+### Quick install
 
-### homebrew 
-```shell
-brew install pmamico/keg/matrix-cam
-```
-
-### from source
+Install directly from the repository (requires Python 3.11+):
 
 ```bash
-git clone https://github.com/pmamico/homebrew-keg.git
-cd homebrew-keg
+pip install "git+https://github.com/pmamico/matrix-cam.git"
+```
+
+Use the optional `ml` extra to enable MediaPipe-based segmentation:
+
+```bash
+pip install "git+https://github.com/pmamico/matrix-cam.git#egg=matrix-cam[ml]"
+```
+
+### Local development
+
+```bash
+git clone https://github.com/pmamico/matrix-cam.git
+cd matrix-cam
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -e '.[dev]'
+# Enable ML extras locally (optional)
+pip install -e '.[ml]'
 ```
 
 ## Run
 
 ```bash
-matrix-cam 
+matrix-cam --refresh-delay 0.05 --source 0 1 --no-mask --segment-backend selfie
 ```
+
+CLI flags worth knowing:
+
+- `--refresh-delay`: seconds between renders (float, default `0.03`).
+- `--no-mask`: start with segmentation disabled.
+- `--segment-backend {mog2,selfie}`: pick a segmenter (see below for extras).
+- `--source INDEX [INDEX ...]`: cycle between one or more camera indices.
 
 ## Running the Prototype
 
 Start with the one-frame prototype to validate camera access without curses:
 
 ```bash
-python -m matrix_cam.prototype [--stats] [--save-frame frame.png] [--no-color]
+matrix-cam-prototype --width 160 --height 80 --segment --stats
 ```
 
 Useful flags:
@@ -49,7 +65,7 @@ Useful flags:
 - `--save-frame frame.png`: save the raw BGR frame as PNG for later inspection.
 - `--no-color`: disable the ANSI green wrapper for plain ASCII output (suitable for piping).
 - `--segment`: compute a foreground mask and blank out the background before rendering.
-- `--segment-backend {mog2,selfie}`: pick the segmentation backend. `selfie` requires MediaPipe (`pip install 'matrix-cam[ml]'`).
+- `--segment-backend {mog2,selfie}`: pick the segmentation backend. `selfie` requires the optional ML extra described in the installation section.
 - `--segment-confidence`: control the mask confidence threshold used by ML backends (default 0.3).
 
 ## Full-Screen UI
@@ -81,7 +97,7 @@ pytest
 
 - MOG2 background subtraction (OpenCV) is the default backend because it is fast and has zero extra dependencies.
 - In the curses UI, `f` toggles masking and the status bar shows the backend name plus estimated foreground coverage.
-- The optional `selfie` backend relies on MediaPipe Selfie Segmentation. Install it via `pip install 'matrix-cam[ml]'`. When unavailable, the app falls back to MOG2 and shows a descriptive error.
+- The optional `selfie` backend relies on MediaPipe Selfie Segmentation. Install it with the `ml` extra (see Installation). When unavailable, the app falls back to MOG2 and shows a descriptive error.
 - The ASCII renderer replaces any background cell with a space character, preserving row length so curses padding stays stable even when backgrounds vanish.
 
 ## macOS Camera Permission
